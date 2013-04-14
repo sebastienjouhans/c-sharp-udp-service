@@ -11,44 +11,46 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Kinrou.io;
+using System.Text;
 
 namespace WP7Test
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        private UdpService updService;
+        private UdpService _udpService;
 
         // Constructor
         public MainPage()
         {
             InitializeComponent();
 
-            updService = new UdpService();
-            updService.initialise();
-            updService.dataUpdate += dataUpdateEventHandler;
+            _udpService = new UdpService();
+            _udpService.initialise();
+            _udpService.dataUpdate += dataUpdateEventHandler;
         }
 
         public void open()
         {
-            updService.join();
+            _udpService.join();
         }
 
         public void close()
         {
-            updService.close();
+            _udpService.close();
         }
 
 
         public void send(string message)
         {
             string newMessage = String.Format("{0}{1}{2}", UdpHelper.START_PROTOCOL, message, UdpHelper.END_PROTOCOL);
-            updService.send(newMessage);
+            _udpService.send(newMessage);
         }
 
 
         public void dataUpdateEventHandler(object sender, EventArgs e)
         {
-            string message = (e as UdpServiceDataUpdateEventArgs).data;
+            byte [] receiveBuffer = (e as UdpServiceDataUpdateEventArgs).data;
+            string message = Encoding.UTF8.GetString(receiveBuffer, 0, receiveBuffer.Length);
             processMessage(message);
         }
 

@@ -15,9 +15,9 @@ namespace Kinrou.io
 {
     public class UdpServiceDataUpdateEventArgs : EventArgs
     {
-        public string data { get; internal set; }
+        public byte [] data { get; internal set; }
 
-        public UdpServiceDataUpdateEventArgs(string data)
+        public UdpServiceDataUpdateEventArgs(byte [] data)
         {
             this.data = data;
         }
@@ -153,9 +153,7 @@ namespace Kinrou.io
 
                     _client.EndReceiveFromGroup(result, out source);
 
-                    string message = Encoding.UTF8.GetString(_receiveBuffer, 0, _receiveBuffer.Length);
-
-                    OnDataUpdate(this, new UdpServiceDataUpdateEventArgs(message));
+                    OnDataUpdate(this, new UdpServiceDataUpdateEventArgs(_receiveBuffer));
 
                     receive();
                 }, null);
