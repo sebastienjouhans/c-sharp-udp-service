@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Diagnostics;
 
-namespace Kinrou.io.Udp
+namespace Kinrou.io
 {
     public class UdpServiceDataUpdateEventArgs : EventArgs
     {
@@ -21,6 +21,10 @@ namespace Kinrou.io.Udp
 
     public class UdpService
     {
+        public static int PORT = 55562;
+        public static string MULTICAST_GROUP_ADDRESS = "224.0.0.13";
+
+
         public delegate void DataUpdateHandler(object sender, EventArgs data);
         public event DataUpdateHandler dataUpdate;
 
@@ -48,7 +52,16 @@ namespace Kinrou.io.Udp
 
         public UdpService()
         {
+            _port = PORT;
+            _groupAddress = MULTICAST_GROUP_ADDRESS;
             isJoined = false;          
+        }
+
+        public UdpService(int p , string ga)
+        {
+            _port = p;
+            _groupAddress = ga;
+            isJoined = false;
         }
 
 
