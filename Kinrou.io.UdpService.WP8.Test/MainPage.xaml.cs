@@ -8,34 +8,103 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using WP8Test.Resources;
+using Kinrou.io;
+using System.Text;
 
 namespace WP8Test
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        private UdpService _udpService;
+
         // Constructor
         public MainPage()
         {
             InitializeComponent();
 
-            // Sample code to localize the ApplicationBar
-            //BuildLocalizedApplicationBar();
+            _udpService = new UdpService();
+            _udpService.initialise();
+            _udpService.dataUpdate += dataUpdateEventHandler;
         }
 
-        // Sample code for building a localized ApplicationBar
-        //private void BuildLocalizedApplicationBar()
-        //{
-        //    // Set the page's ApplicationBar to a new instance of ApplicationBar.
-        //    ApplicationBar = new ApplicationBar();
+        public void open()
+        {
+            _udpService.join();
+        }
 
-        //    // Create a new button and set the text value to the localized string from AppResources.
-        //    ApplicationBarIconButton appBarButton = new ApplicationBarIconButton(new Uri("/Assets/AppBar/appbar.add.rest.png", UriKind.Relative));
-        //    appBarButton.Text = AppResources.AppBarButtonText;
-        //    ApplicationBar.Buttons.Add(appBarButton);
+        public void close()
+        {
+            _udpService.close();
+        }
 
-        //    // Create a new menu item with the localized string from AppResources.
-        //    ApplicationBarMenuItem appBarMenuItem = new ApplicationBarMenuItem(AppResources.AppBarMenuItemText);
-        //    ApplicationBar.MenuItems.Add(appBarMenuItem);
-        //}
+
+        public void send(string message)
+        {
+            string newMessage = String.Format("{0}{1}{2}", UdpHelper.START_PROTOCOL, message, UdpHelper.END_PROTOCOL);
+            _udpService.send(newMessage);
+        }
+
+
+        public void dataUpdateEventHandler(object sender, EventArgs e)
+        {
+            byte[] receiveBuffer = (e as UdpServiceDataUpdateEventArgs).data;
+            string message = Encoding.UTF8.GetString(receiveBuffer, 0, receiveBuffer.Length);
+            processMessage(message);
+        }
+
+
+        private void processMessage(string data)
+        {
+            if (!UdpHelper.isDataValid(data))
+            {
+                return;
+            }
+
+            // trimming /00 and /99
+            data = UdpHelper.trimStartAndEnd(data);
+
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                try
+                {
+                    Log(txtInput.Text, false);
+                }
+                catch (Exception)
+                { }
+            });
+
+        }
+
+
+        private void btnSend_Click(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrWhiteSpace(txtInput.Text))
+            {
+                send(txtInput.Text);
+                Log(txtInput.Text, true);
+            }
+        }
+
+        private void Log(string message, bool isOutgoing)
+        {
+            if (string.IsNullOrWhiteSpace(message.Trim('\0')))
+                return;
+
+            string direction = (isOutgoing) ? ">> " : "<< ";
+            string timestamp = DateTime.Now.ToString("HH:mm:ss");
+            message = timestamp + direction + message;
+            lbLog.Items.Add(message);
+            lbLog.ScrollIntoView(message);
+
+
+        }
+
+
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            open();
+        }
     }
 }
