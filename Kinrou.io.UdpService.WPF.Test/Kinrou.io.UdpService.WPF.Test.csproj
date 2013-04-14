@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Kinrou.io.UdpService.Silverlight">
+      <HintPath>..\Kinrou.io.UdpService.Silverlight\bin\Debug\Kinrou.io.UdpService.Silverlight.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
