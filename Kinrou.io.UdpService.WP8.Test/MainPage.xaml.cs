@@ -8,7 +8,7 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using WP8Test.Resources;
-using Kinrou.io;
+using Kinrou.io.Udp;
 using System.Text;
 
 namespace WP8Test

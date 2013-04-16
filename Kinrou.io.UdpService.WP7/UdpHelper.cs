@@ -1,6 +1,6 @@
 ﻿
 
-namespace Kinrou.io
+namespace Kinrou.io.Udp
 {
     public static class UdpHelper
     {

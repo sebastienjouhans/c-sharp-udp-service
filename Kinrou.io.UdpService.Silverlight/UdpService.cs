@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Diagnostics;
 
-namespace Kinrou.io
+namespace Kinrou.io.Udp
 {
     public class UdpServiceDataUpdateEventArgs : EventArgs
     {

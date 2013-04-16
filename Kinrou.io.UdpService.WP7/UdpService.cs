@@ -12,7 +12,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Diagnostics;
 
-namespace Kinrou.io
+namespace Kinrou.io.Udp
 {
     public class UdpServiceDataUpdateEventArgs : EventArgs
     {
